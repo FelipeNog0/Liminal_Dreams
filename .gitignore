@@ -1,0 +1,25 @@
+# UNITY
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+MemoryCaptures/
+UserSettings/
+
+# VS / Rider / Outros
+.vscode/
+*.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.booproj
+# Ignorar arquivos do Visual Studio
+.vs/
+
+
+# OS
+.DS_Store
+Thumbs.db
