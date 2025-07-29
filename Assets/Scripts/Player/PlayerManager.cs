@@ -1,22 +1,29 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    [Header("MovimentaÁ„o")]
+    [Header("Movimenta√ß√£o")]
     public float moveSpeed = 5f;
 
-    [Header("Mouse_MovimentaÁ„o")]
+    [Header("Mouse_Movimenta√ß√£o")]
     public float mouseSensitivity = 100f;
     public Transform cameraTransform;
+
+    [Header("Lanterna")]
+    private Light luzLanterna;
+    private bool lanternaAtivada = false;
 
     private float bobFrequency = 10f;
     private float bobAmplitude = 0.05f;
     private float bobTimer = 0f;
     private Vector3 cameraInitialLocalPos;
-    private Rigidbody rigidbody;
+    private Rigidbody meuRigidbody;
 
     float xRotation = 0f;
     public float corridavelocidade = 10f;
+
+    private float groundCheckDistance = 1.1f;
+    public LayerMask groundMask;
 
     void Start()
     {
@@ -27,8 +34,8 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         cameraInitialLocalPos = cameraTransform.localPosition;
-        rigidbody = GetComponent<Rigidbody>();
-        rigidbody.freezeRotation = true;
+        meuRigidbody = GetComponent<Rigidbody>();
+        meuRigidbody.freezeRotation = true;
     }
 
     void Update()
@@ -36,6 +43,7 @@ public class PlayerManager : MonoBehaviour
         Mover();
         OlharComMouse();
         CameraBalanco();
+        ChecarLanterna();
     }
 
     void Mover()
@@ -45,7 +53,7 @@ public class PlayerManager : MonoBehaviour
 
         Vector3 direction = new Vector3(horizontal, 0f, vertical);
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? corridavelocidade : moveSpeed;
-        Vector3 move = transform.TransformDirection(direction) * moveSpeed * Time.deltaTime;
+        Vector3 move = transform.TransformDirection(direction) * currentSpeed * Time.deltaTime;
 
         transform.position += move;
     }
@@ -55,12 +63,10 @@ public class PlayerManager : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        
         xRotation += mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         cameraTransform.localRotation = Quaternion.Euler(-xRotation, 0f, 0f);
-
         transform.Rotate(Vector3.up * mouseX);
     }
 
@@ -69,10 +75,11 @@ public class PlayerManager : MonoBehaviour
         float bobSpeed = Input.GetKey(KeyCode.LeftShift) ? bobFrequency * 1.5f : bobFrequency;
         float bobSize = Input.GetKey(KeyCode.LeftShift) ? bobAmplitude * 1.5f : bobAmplitude;
         float speed = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).magnitude;
-        if (speed > 0.1f && CharacterEst·NoCh„o())
+
+        if (speed > 0.1f && CharacterEst√°NoCh√£o())
         {
-            bobTimer += Time.deltaTime * bobFrequency;
-            float bobOffset = Mathf.Sin(bobTimer) * bobAmplitude;
+            bobTimer += Time.deltaTime * bobSpeed;
+            float bobOffset = Mathf.Sin(bobTimer) * bobSize;
             cameraTransform.localPosition = cameraInitialLocalPos + new Vector3(0f, bobOffset, 0f);
         }
         else
@@ -82,11 +89,26 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private float groundCheckDistance = 1.1f;
-    public LayerMask groundMask;
-
-    bool CharacterEst·NoCh„o()
+    bool CharacterEst√°NoCh√£o()
     {
         return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundMask);
     }
+
+    void ChecarLanterna()
+    {
+        if (luzLanterna != null && Input.GetKeyDown(KeyCode.F))
+        {
+            lanternaAtivada = !lanternaAtivada;
+            luzLanterna.enabled = lanternaAtivada;
+        }
+    }
+
+
+    public void RegistrarNovaLanterna(GameObject lanternaInstanciada)
+    {
+        luzLanterna = lanternaInstanciada.GetComponentInChildren<Light>();
+        if (luzLanterna != null)
+            luzLanterna.enabled = false;
+    }
+
 }
