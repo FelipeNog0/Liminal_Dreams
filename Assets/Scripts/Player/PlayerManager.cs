@@ -13,6 +13,18 @@ public class PlayerManager : MonoBehaviour
     private Light luzLanterna;
     private bool lanternaAtivada = false;
 
+    [Header("Áudio")]
+    public AudioSource audioSourcePassos;
+    public AudioClip[] passosClips;
+    public float tempoEntrePassos = 0.5f;
+
+    [Header("Som da Lanterna")]
+    public AudioClip somLanterna;
+    private AudioSource audioSourceLanterna;
+
+
+    private float proximoSomPasso = 0f;
+
     private float bobFrequency = 10f;
     private float bobAmplitude = 0.05f;
     private float bobTimer = 0f;
@@ -36,6 +48,10 @@ public class PlayerManager : MonoBehaviour
         cameraInitialLocalPos = cameraTransform.localPosition;
         meuRigidbody = GetComponent<Rigidbody>();
         meuRigidbody.freezeRotation = true;
+        audioSourceLanterna = gameObject.AddComponent<AudioSource>();
+        audioSourceLanterna.playOnAwake = false;
+        audioSourceLanterna.spatialBlend = 0f;
+
     }
 
     void Update()
@@ -56,6 +72,25 @@ public class PlayerManager : MonoBehaviour
         Vector3 move = transform.TransformDirection(direction) * currentSpeed * Time.deltaTime;
 
         transform.position += move;
+
+        if (direction.magnitude > 0.1f && CharacterEstáNoChão())
+        {
+            if (Time.time >= proximoSomPasso)
+            {
+                TocarPasso();
+                float modificador = Input.GetKey(KeyCode.LeftShift) ? 0.3f : 0.5f;
+                proximoSomPasso = Time.time + modificador;
+            }
+        }
+    }
+
+    void TocarPasso()
+    {
+        if (passosClips.Length > 0 && audioSourcePassos != null)
+        {
+            AudioClip clip = passosClips[Random.Range(0, passosClips.Length)];
+            audioSourcePassos.PlayOneShot(clip);
+        }
     }
 
     void OlharComMouse()
@@ -100,8 +135,12 @@ public class PlayerManager : MonoBehaviour
         {
             lanternaAtivada = !lanternaAtivada;
             luzLanterna.enabled = lanternaAtivada;
+
+            if (somLanterna != null)
+                audioSourceLanterna.PlayOneShot(somLanterna);
         }
     }
+
 
 
     public void RegistrarNovaLanterna(GameObject lanternaInstanciada)
