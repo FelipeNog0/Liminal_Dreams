@@ -47,11 +47,14 @@ public class LanternaPickup : MonoBehaviour
         player.RegistrarNovaLanterna(lanternaInstanciada);
 
         if (somPickup != null)
-            audioSource.PlayOneShot(somPickup);
+            AudioSource.PlayClipAtPoint(somPickup, transform.position);
+
+        Destroy(gameObject);
+
 
         yield return new WaitForSeconds(somPickup != null ? somPickup.length : 0f);
 
-        Destroy(gameObject);
+       
     }
 
     void OnTriggerEnter(Collider other)
