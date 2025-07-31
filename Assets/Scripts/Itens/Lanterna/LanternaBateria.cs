@@ -13,12 +13,6 @@ public class LanternaBateria : MonoBehaviour
     private float timer = 0f;
     private bool textoVisivelAnterior = false;
 
-    void Start()
-    {
-        if (textoBateria != null && textoBateria.transform.parent != null)
-            textoBateria.transform.parent.gameObject.SetActive(false);
-    }
-
     void Update()
     {
         if (estaNaMao && !textoVisivelAnterior)
