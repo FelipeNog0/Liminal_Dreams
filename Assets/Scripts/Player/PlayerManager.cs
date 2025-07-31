@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class PlayerManager : MonoBehaviour
     private float bobTimer = 0f;
     private Vector3 cameraInitialLocalPos;
     private Rigidbody meuRigidbody;
+    public TextMeshProUGUI textoBateriaUI;
 
     float xRotation = 0f;
     public float corridavelocidade = 10f;
@@ -148,6 +150,18 @@ public class PlayerManager : MonoBehaviour
         luzLanterna = lanternaInstanciada.GetComponentInChildren<Light>();
         if (luzLanterna != null)
             luzLanterna.enabled = false;
+
+       
+        LanternaBateria lanternaBateria = lanternaInstanciada.GetComponent<LanternaBateria>();
+        if (lanternaBateria == null)
+        {
+            
+            lanternaBateria = lanternaInstanciada.AddComponent<LanternaBateria>();
+        }
+
+        lanternaBateria.luzDaLanterna = luzLanterna;
+        lanternaBateria.textoBateria = textoBateriaUI; 
+        lanternaBateria.estaNaMao = true;
     }
 
 }
